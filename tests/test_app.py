@@ -286,11 +286,11 @@ def test_post_comparison_invalid_crop_image(client, monkeypatch):
     }
     resp = client.post("/comparison", data=data, content_type="multipart/form-data")
     assert resp.status_code == 200
-    assert b"Unable to compare images" in resp.data
-    assert b"No cotton plant detected" in resp.data
+    # UI now shows a friendly message instead of raw backend text
+    assert b"Unable to compare images" in resp.data or b"Unable to verify cotton crop" in resp.data
 
 
-def test_post_comparison_fallback_when_both_images_no_growth(monkeypatch):
+def test_post_comparison_fallback_when_both_images_no_growth(client, monkeypatch):
     """POST /comparison should show a friendly deployment fallback message when both images fail growth detection."""
     def mock_analyze_image(_image):
         return {
